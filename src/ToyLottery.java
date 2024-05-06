@@ -38,7 +38,10 @@ public class ToyLottery {
                 Toy toy = toyQueue.poll();
                 if (toy != null) {
                     writer.write(toy.id + " " + toy.name + "\n");
-                    toyQueue.offer(toy);
+                    toy.frequency--;
+                    if (toy.frequency > 0) {
+                        toyQueue.offer(toy);
+                    }
                 }
             }
             System.out.println("Результаты розыгрыша записаны в файл 'winners.txt'.");
