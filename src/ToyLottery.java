@@ -13,17 +13,38 @@
 Вызвать Get 10 раз и записать результат в файл
  */
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.PriorityQueue;
 
 public class ToyLottery {
     PriorityQueue<Toy> toyQueue;
 
     public ToyLottery(String[] ids, String[] names, int[] frequencies) {
+        if (ids.length != names.length || ids.length != frequencies.length) {
+            throw new IllegalArgumentException("Размеры массивов не совпадают.");
+        }
+        toyQueue = new PriorityQueue<>((t1, t2) -> t2.frequency - t1.frequency);
 
+        for (int i = 0; i < ids.length; i++) {
+            toyQueue.offer(new Toy(ids[i], names[i], frequencies[i]));
+        }
     }
 
     public void getToys(int times) {
-
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("winners.txt"))) {
+            for (int i = 0; i < times; i++) {
+                Toy toy = toyQueue.poll();
+                if (toy != null) {
+                    writer.write(toy.id + " " + toy.name + "\n");
+                    toyQueue.offer(toy);
+                }
+            }
+            System.out.println("Результаты розыгрыша записаны в файл 'winners.txt'.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
